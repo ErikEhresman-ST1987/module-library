@@ -10,6 +10,18 @@ It is a **toolbox, not a framework**.
 
 Projects remain authoritative for their own architecture. No project is required to conform to this library, and a module should be adopted only when it fits the project's actual requirements.
 
+## Parts-Bin Operating Rule
+
+The Module Library is the proven-parts bin for future development.
+
+Before implementing a capability that may have been solved in an earlier project, **check the Module Library first**. If an admitted module fits the current requirement, use it as the starting point rather than generating another independent implementation.
+
+The purpose is not merely to save typing. Reusing a module preserves code that has already survived development, debugging, deployment, and real use. Do not pay again to invent and debug a wheel that is already proven.
+
+This rule applies to small sections of code and foundational files as well as larger discrete modules. A useful reusable part does not need to be architecturally impressive; boring, dependable code that repeatedly solves the same problem may be exactly what belongs here.
+
+Library reuse is still a judgment call. If the proven part does not fit the current project's actual requirement, do not force it. The project remains authoritative.
+
 ## Core Rule
 
 > **Populate by extraction, not invention.**
@@ -64,6 +76,6 @@ Keep documentation proportional to the module. The library should reduce work, n
 
 ## Initial Status
 
-Repository foundation established. No code modules have yet been admitted.
+Repository foundation established. The library currently contains admitted reusable parts documented in `MODULE-INDEX.md`.
 
-The next step is to inspect existing projects for repeated, proven capabilities and create a conservative candidate inventory before extracting code.
+Continue auditing existing and future projects for code we are repeatedly writing and debugging. Apply the Six-Point Module Gate, then extract the smallest useful proven part.
