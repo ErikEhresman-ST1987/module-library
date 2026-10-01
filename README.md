@@ -22,6 +22,42 @@ This rule applies to small sections of code and foundational files as well as la
 
 Library reuse is still a judgment call. If the proven part does not fit the current project's actual requirement, do not force it. The project remains authoritative.
 
+## What the Parts Bin May Preserve
+
+The primary contents are **proven code modules**: complete files or bounded sections of code that solve recurring problems and have earned reuse through real projects.
+
+The same evidence-first rule also applies to four supporting kinds of proven parts:
+
+### Proven configurations and templates
+
+Not every reusable wheel is JavaScript. A configuration, manifest structure, HTML shell, path convention, or other setup may belong here when substantially the same setup has been repeatedly used and proven.
+
+Preserve these only when reuse saves meaningful setup, debugging, or compatibility work. Do not create templates for hypothetical future projects.
+
+### Micro-utilities
+
+Small functions can earn reuse too. Date helpers, escaping functions, file helpers, safe parsing, ID utilities, and similar code may be worth preserving when the same small solution keeps being rewritten.
+
+Size is not an admission criterion. A five-line function that is repeatedly needed and already debugged can be more valuable than a large abstraction.
+
+Do not catalog trivial code merely because it can be reused. Preserve it when doing so actually reduces repeated work or increases reliability.
+
+### Verification recipes
+
+When a reusable part has a proven way to verify it, preserve that verification knowledge with the part.
+
+A compact verification recipe should capture the meaningful checks that established confidence in the implementation: for example, online and offline behavior, reload behavior, replacement/restore safety, cache-version changes, or real-device checks.
+
+This allows future projects to reuse not only proven code but also the proven way of checking that the code is correctly integrated.
+
+### Proven fixes and lessons
+
+When real use exposes a bug, browser edge case, deployment problem, compatibility issue, or other weakness in a reusable part, preserve the verified improvement in the canonical part.
+
+Record a short explanation when it helps future development understand why the fix exists or prevents the same problem from being rediscovered.
+
+Updating the canonical part improves the starting point for future projects. Existing working projects are not automatically rewritten; back-port an improvement only when there is a concrete reason to change them.
+
 ## Core Rule
 
 > **Populate by extraction, not invention.**
