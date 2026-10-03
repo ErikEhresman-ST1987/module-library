@@ -38,3 +38,12 @@ Project-specific validation, state shape, UI, naming, and policy stay with the p
 | [Installed PWA Stale-Asset Recovery](lessons/pwa-stale-asset-recovery.md) | Recovery procedure for a reproduced mixed/stale installed-PWA release, including physical asset renaming when ordinary cache busting fails. | Stranded Colony |
 | [PWA Shell Release Order](lessons/pwa-release-order.md) | Publish changed shell files before the new service worker so a new cache does not activate against unavailable files. | Personal Dashboard |
 | [Storage Key Is Not the Release Version](lessons/storage-key-is-not-release-version.md) | Keeps durable data namespace, schema version, application release, and service-worker cache version conceptually separate. | Personal Dashboard; reinforced across local-first projects |
+
+## Project Planning
+
+| Item | Function | Proven across |
+|---|---|---|
+| [Goal Box Base](planning/goal-box-base.md) | Defines the reusable backbone for establishing a project's mature destination, protected experience, boundaries, known requirements, non-goals, and intentionally open decisions without forcing a fixed document size. | Follow-Up Tracker; Fire Ambience; Haven's Reach; Stranded Colony planning evolution |
+| [Project Foundation Base](planning/project-foundation-base.md) | Translates an approved Goal Box into durable ownership, technology, data/recovery, conditional project contracts, verification, and a bounded next meaningful slice. | Follow-Up Tracker; Fire Ambience; Haven's Reach; Stranded Colony |
+| [AI Project Planning Instructions](planning/ai-project-planning-instructions.md) | Governs how the AI authors and applies Goal Boxes and Foundations, including re-grounding and the corrected Smallest Meaningful Slice rule: determine meaning first, then minimize while preserving diagnosability. | Repeated cross-project planning and increment-sizing experience |
+
