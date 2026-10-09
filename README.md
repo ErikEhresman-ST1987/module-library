@@ -115,3 +115,13 @@ Keep documentation proportional to the module. The library should reduce work, n
 Repository foundation established. The library currently contains admitted reusable parts documented in `MODULE-INDEX.md`.
 
 Continue auditing existing and future projects for code we are repeatedly writing and debugging. Apply the Six-Point Module Gate, then extract the smallest useful proven part.
+
+## Verification of reusable parts
+
+The dependency-free source-level regression suite is in `tests/modules.test.mjs`. From the repository root run:
+
+```sh
+node --test tests/modules.test.mjs
+```
+
+It covers the five indexed JavaScript/service-worker modules, including corrupt local state, invalid/oversized JSON, HTML escaping, local dates, cache ownership, and event-lifetime handling. The tests are not a substitute for host-app integration, installed PWA checks, or iPhone/iPad verification. The October 9, 2026 audit branch contains hardening changes to Local JSON State and Offline App Shell; existing apps are deliberately untouched. A passing test run must be recorded before marking this branch verified.
