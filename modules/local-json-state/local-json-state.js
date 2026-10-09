@@ -1,11 +1,8 @@
 /*
-  Local JSON State
-  Extracted from repeated localStorage persistence in Personal Dashboard,
-  Follow-Up Tracker, Hall Cleaning List, Little Field Farm, and Haven's Reach.
-
-  The host owns defaults, normalization, validation, and migration.
+  Local JSON State — host owns schema, normalization and migration.
+  A failed read must not masquerade as an empty first run: doing so could
+  cause the next save to overwrite recoverable data.
 */
-
 export function createLocalJsonState({
   key,
   createDefault,
@@ -23,8 +20,8 @@ export function createLocalJsonState({
         ? normalize(createDefault())
         : normalize(JSON.parse(stored));
     } catch (error) {
-      onError(error, "load");
-      return normalize(createDefault());
+      try { onError(error, "load"); } catch { /* Preserve original error. */ }
+      throw error;
     }
   }
 
@@ -34,7 +31,7 @@ export function createLocalJsonState({
       localStorage.setItem(key, JSON.stringify(normalized));
       return normalized;
     } catch (error) {
-      onError(error, "save");
+      try { onError(error, "save"); } catch { /* Preserve original error. */ }
       throw error;
     }
   }
@@ -43,7 +40,7 @@ export function createLocalJsonState({
     try {
       localStorage.removeItem(key);
     } catch (error) {
-      onError(error, "clear");
+      try { onError(error, "clear"); } catch { /* Preserve original error. */ }
       throw error;
     }
   }
