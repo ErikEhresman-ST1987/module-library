@@ -48,3 +48,7 @@ Verify in the host project that:
 4. normalization still applies;
 5. storage failures follow the host's chosen error path;
 6. clear removes only the project's own storage key.
+
+## Verified failure contract (audit branch)
+
+A missing key is a normal first run and returns defaults. A malformed JSON value, failed normalization, or blocked storage read **throws** after calling `onError`; it does not silently return empty defaults. The host must display or handle the failure and must not save default state over potentially recoverable data. Existing consumers should not adopt this changed contract without integration review.
