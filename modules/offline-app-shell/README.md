@@ -49,3 +49,7 @@ For the host project:
 ## Known adaptation points
 
 Stranded Colony required a larger explicit shell and navigation-aware fallback. Simpler productivity apps used smaller shells. Keep the shell bounded to what the project actually needs.
+
+## Cache isolation and event lifetime (audit branch)
+
+Adapt both `CACHE_PREFIX` (unique per application) and `CACHE_NAME` (versioned within that prefix). Activation removes only old caches bearing the app's prefix, not other apps' caches on the same origin. Network-response cache writes are attached to the fetch event with `event.waitUntil`; a cache write failure does not hide a successful network response. Requests outside the service worker's registration scope are ignored. This is a copy-and-adapt reference; real device and offline verification remain mandatory.
