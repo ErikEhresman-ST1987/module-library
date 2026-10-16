@@ -32,3 +32,11 @@ Candidate measures include number of switches, reachable destinations, wrong-rou
 
 - [Lights Out generation profiles](https://github.com/ErikEhresman-ST1987/Puzzle-time/blob/dev/connect-colors-slice-1/games/lights-out/generator.js)
 - [Connect the Colors generation profiles](https://github.com/ErikEhresman-ST1987/Puzzle-time/blob/dev/connect-colors-slice-1/games/connect-colors/generator.js)
+
+## Tiny Railway Dispatcher retrospective — October 2026
+
+The game delivered appealing animation, reliable track-following, switches, varied layouts, and verified solvability. However, the user found even Hard immediately obvious. Its difficulty measure (minimum switches to change) counted actions rather than reasoning. The game was removed from the collection menu, with code preserved for reuse.
+
+**Lesson:** solvability, variety, visual quality, and number of actions do not establish engaging puzzle difficulty. Distinguish mechanical effort, reasoning required to discover a solution, and frustration from unclear or repetitive play.
+
+**Proposed early evaluation gate:** Before major art or procedural generation, build three representative Easy, Medium, and Hard puzzles. Have the intended player solve them without knowing the answers. Observe whether the solution is obvious, requires satisfying deductions, and provides useful feedback on mistakes. If Hard is still obvious, reconsider the core mechanic before polishing or multiplying layouts. Proceed to generation and presentation only when this small playtest establishes meaningful challenge. This gate is a proposed practice, not a proven universal formula.
