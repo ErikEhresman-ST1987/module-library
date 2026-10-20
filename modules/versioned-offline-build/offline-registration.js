@@ -5,24 +5,30 @@ const refreshKey = 'pop-squadron-refreshed-build';
 let registration;
 let checking = false;
 let refreshing = false;
+// An automatic retry is limited per release, but manual retries are never blocked.
 
 function show(message) {
   const element = status();
   if (element) element.textContent = message;
 }
 function currentVersion() { return build.slice(0, 9); }
-function refreshFor(version) {
-  if (refreshing || !navigator.onLine) return;
+function refreshFor(version, manual = false) {
+  if (refreshing || !navigator.onLine || !version || version === build) return;
   try {
-    if (sessionStorage.getItem(refreshKey) === version) {
-      show('Update detected but reload did not complete · Tap Check for Updates');
+    // The stored value limits automatic navigation loops, not explicit user retries.
+    if (!manual && sessionStorage.getItem(refreshKey) === version) {
+      show('New version ready · Tap Check for Updates to retry loading it');
       return;
     }
     sessionStorage.setItem(refreshKey, version);
   } catch { /* Private storage may be disabled. */ }
   refreshing = true;
-  show('New version installed · Refreshing…');
-  window.location.reload();
+  show('New version ready · Loading ' + version.slice(0, 9) + '…');
+  // A distinct navigation URL avoids iOS restoring the identical page snapshot.
+  // The active worker still serves its own coherent cached HTML for navigation.
+  const url = new URL(window.location.href);
+  url.searchParams.set('release', version.slice(0, 16));
+  window.location.replace(url.href);
 }
 async function probeRelease() {
   const response = await fetch(base + 'release.json?check=' + Date.now(), { cache: 'no-store' });
@@ -31,7 +37,7 @@ async function probeRelease() {
   if (!release || typeof release.build !== 'string' || !release.build) throw new Error('Invalid release metadata');
   return release.build;
 }
-export async function checkForUpdates() {
+export async function checkForUpdates(manual = false) {
   if (checking) return;
   if (!navigator.onLine) { show('Offline · Installed version ' + currentVersion()); return; }
   checking = true;
@@ -39,6 +45,7 @@ export async function checkForUpdates() {
   try {
     const latest = await probeRelease();
     if (latest === build) {
+      try { sessionStorage.removeItem(refreshKey); } catch { /* Storage unavailable. */ }
       show('Up to date · Version ' + currentVersion());
       return;
     }
@@ -50,13 +57,13 @@ export async function checkForUpdates() {
     const worker = registration.waiting || registration.installing;
     if (worker) {
       worker.addEventListener('statechange', () => {
-        if (worker.state === 'activated') refreshFor(latest);
+        if (worker.state === 'activated') refreshFor(latest, manual);
         if (worker.state === 'redundant') show('Update failed · Tap Check for Updates');
       });
     } else if (navigator.serviceWorker.controller) {
       // update() may already have activated the new worker.
       const activeBuild = await readWorkerBuild(navigator.serviceWorker.controller);
-      if (activeBuild === latest) refreshFor(latest);
+      if (activeBuild === latest) refreshFor(latest, userRequested);
       else show('New version found · Retry Check for Updates shortly');
     } else show('Update installing · Reopen when complete');
   } catch (error) {
@@ -75,7 +82,7 @@ function readWorkerBuild(worker) {
 }
 export async function setupOffline() {
   const button = document.getElementById('check-updates');
-  if (button) button.addEventListener('click', () => { void checkForUpdates(); });
+  if (button) button.addEventListener('click', () => { void checkForUpdates(true); });
   if (!('serviceWorker' in navigator)) {
     show('Offline installation unavailable in this browser');
     return;
