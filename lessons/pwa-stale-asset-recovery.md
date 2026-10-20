@@ -26,3 +26,13 @@ Stranded Colony encountered this twice around its Phase 2 Increment 3 delivery. 
 ## Boundary
 
 Do not rename physical assets routinely. Normal versioned cache updates are simpler and should remain the ordinary release path. Use this recovery when a stale installed-PWA asset is actually reproduced.
+
+## Additional proven case: Pop Squadron (iPhone, 2026-10)
+
+A Vite-built installed PWA displayed its static hangar while dynamic JavaScript-generated sections stayed empty. A cache-clearing attempt did not fix the installed experience, although a query-parameter Safari URL loaded the game. Pop Squadron's versioned service worker initially deleted previous build caches immediately on activation. Its corrected variant retained older caches and checked them for requested hashed assets when the current cache missed. The registration helper also requested online update checks.
+
+**Deployment trap:** The first attempted correction never reached the website: CI failed because two tests asserted the old cache implementation. The tests were updated to verify the new intended behavior; only after the corrected deployment did the user confirm normal initialization, saved wallet/equipment/progression, and Airplane Mode operation.
+
+**Reusable lesson:** When an installed PWA appears frozen, distinguish static HTML loading from JavaScript initialization, verify the latest CI deployment actually succeeded, and ensure old clients can still obtain their original hashed assets during worker transitions. Preserve localStorage separately from caches. See [Versioned Offline Build](../modules/versioned-offline-build/) for the working source variant.
+
+This case supports the tested correction, but does not independently prove that cache deletion was the sole cause of every observed startup failure.
