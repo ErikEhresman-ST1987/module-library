@@ -48,3 +48,13 @@ After adding four Primary Weapons, GitHub Actions passed tests, built, and publi
 **Verification:** The corrective GitHub Pages deployment completed successfully and the user reported, “That worked!” on the installed iPhone app. This confirms the combined fix for that incident, not independent effectiveness of each component or all future Safari versions. The guard currently uses the service-worker script URL, which may remain stable between versions; future adopters should validate repeated updates across multiple releases and consider a true build-version token.
 
 **Reusable files:** [Versioned Offline Build](../modules/versioned-offline-build/) includes the updated source implementations. Avoid recommending app removal or Safari website-data clearing before preserving local saves.
+
+## Version-aware follow-up: repeated stale Wing Guns release (Pop Squadron, 2026-10)
+
+A later Wing Guns release again deployed successfully to GitHub Pages but stayed absent from the iPhone Home Screen app after several online launches, waiting periods, and forced restarts. The prior `controllerchange` refresh guard keyed on the worker's stable `scriptURL` (`sw.js`), which is not a release identifier and could suppress subsequent refreshes.
+
+**Correction deployed:** Publish `release.json` containing the build ID; make its network fetch bypass service-worker cache and use `cache: 'no-store'`. Embed the same build ID into Vite's application and generated worker. Register the worker with `updateViaCache: 'none'`, check releases on launch/foreground/online and via a manual button, query worker identity through `MessageChannel`, and refresh only for a newer activated build. Preserve same-build navigation HTML and hashed assets, old caches, and all local saved state.
+
+**Observed outcome:** GitHub Actions tests, build, and Pages deploy passed; the user reported the installed iPhone app pulled the new update down almost instantly. This confirms **one** successful device transition. Multiple consecutive release transitions and interrupted-update/offline regression checks remain to be demonstrated.
+
+**Canonical files and integration:** [Version-Aware Offline Build](../modules/versioned-offline-build/). For new Vite/GitHub Pages PWA work, inspect and adapt this method instead of reintroducing the fixed-script-URL guard. Do not infer guaranteed instantaneous updates on all Safari installations.
