@@ -1,42 +1,50 @@
-# Versioned Offline Build (Vite / GitHub Pages)
+# Version-Aware Offline Build (Vite / GitHub Pages)
 
 ## Responsibility
-Builds a **complete, versioned offline asset cache** for a Vite-generated static application and serves HTML from the same release as its compiled JS/CSS. A separate browser registration helper checks for updates when online.
+Produces a complete versioned offline bundle with same-release HTML/JS/CSS, retains older hashed assets for transitioning clients, and checks a separately published release identifier so installed iPhone PWAs can detect new deployments reliably.
 
-## Proven source
-[Pop Squadron](https://github.com/ErikEhresman-ST1987/pop-squadron), increment 9.2.1, followed by the October 2026 installed-app refresh correction. The installed iPhone game initially displayed a static hangar without JavaScript initialization during a release transition. After the cache transition correction was deployed, the user confirmed successful launch, persistent purchases and wallet, and Airplane Mode play.
+## Proven source and status
+[Pop Squadron](https://github.com/ErikEhresman-ST1987/pop-squadron), October 2026. The initial cached-build implementation preserved offline operation and saved game data, but a later Wing Guns release stayed stale in the installed iPhone app despite successful GitHub Pages deployment and repeated force-closing. The version-aware update system was deployed with successful automated tests/build/deployment; the user reported that the installed app pulled the update down almost immediately. **One successful observed transition is not yet evidence of repeated multi-release reliability.**
 
-This is an **alternative** to [Offline App Shell](../offline-app-shell/), not its replacement. Choose the strategy based on the project's build and update needs.
+This is a specialized **copy-and-adapt** Vite/GitHub Pages module, not a generic drop-in or mandatory replacement for [Offline App Shell](../offline-app-shell/).
 
-## Files
-- [prepare-offline.mjs](prepare-offline.mjs): updated, device-confirmed Pop Squadron build script; hashes built assets, emits `dist/sw.js`, precaches the build and serves cached navigation HTML.
-- [offline-registration.js](offline-registration.js): updated browser registration helper; checks for updated service workers on online launch.
+## Canonical source files
+- [prepare-offline.mjs](prepare-offline.mjs) — builds `dist/release.json`, hashes and precaches a coherent build, generates `dist/sw.js`, bypasses cache for release probes, identifies its own build via `BUILD_VERSION` messages, and retains older caches.
+- [offline-registration.js](offline-registration.js) — registers with `updateViaCache: 'none'`, checks release metadata using `cache: 'no-store'`, checks on launch/resume/online and by manual action, compares worker build identity, and reloads when the new worker is active.
 
-Both files track the proven Pop Squadron implementation, including its later installed-app update correction. They are **copy-and-adapt**, not a plug-and-play dependency.
+The files above are synchronized with Pop Squadron's working source. Keep them together: the worker message protocol and release identifiers must agree.
 
-## Integration
-1. Use a Vite build that outputs `dist/index.html`, `dist/manifest.webmanifest` and hashed compiled assets.
-2. Adapt the hardcoded `/pop-squadron/` prefix and service-worker scope to the host application's deployment base path.
-3. Run the adapted `prepare-offline.mjs` **after** Vite's production build; publish the entire resulting `dist` together.
-4. Import and call `setupOffline()` from the application's startup after the app's required UI initialization. Preserve application data keys independently of release/cache versions.
-5. Do not change the cache strategy to network-first without separately validating version consistency and offline operation.
+## Required host integration
+1. Configure Vite's base for the host path and define a **build-time constant** `__POP_BUILD_ID__` using the same release identifier as the postbuild script. For Pop Squadron:
+   ```js
+   const buildId = process.env.GITHUB_SHA || process.env.POP_BUILD_ID || 'local-development';
+   export default defineConfig({ base: '/pop-squadron/', define: { __POP_BUILD_ID__: JSON.stringify(buildId) } });
+   ```
+   Replace the constant name and base path for other applications, consistently in both files.
+2. Ensure the production build environment exposes the same immutable build ID (GitHub Actions supplies `GITHUB_SHA`). Do not generate separate random values in Vite and the offline postbuild step.
+3. Run Vite first, then the adapted `prepare-offline.mjs` so the published `dist` includes `index.html`, compiled assets, `manifest.webmanifest`, `release.json`, and `sw.js`.
+4. Update the hardcoded `/pop-squadron/` prefix and scope in the script; the registration helper uses `import.meta.env.BASE_URL`.
+5. Add `<p id="offline-status" aria-live="polite"></p>` and `<button id="check-updates" type="button">Check for Updates</button>` to the application's UI. Import and call `setupOffline()` from the application startup. The update control is optional only if the corresponding listener is deliberately adapted.
+6. Publish the whole build together. Preserve localStorage keys and durable state independently of build/cache versions. Never clear browser storage to force an update.
 
-## Critical release behavior
-- The navigation handler returns HTML from the worker's **own** precached release. A fresh network HTML response referencing newer compiled assets could break an older worker's offline bundle.
-- Do **not** immediately delete previous versioned caches when a new worker activates. Existing clients may still request hashed assets from their prior release.
-- When an asset is missing from the current cache, look in retained older caches before fetching it from the network.
-- The online registration helper calls `registration.update()` and listens for `controllerchange`, reloading an existing controlled online client once per worker script URL (sessionStorage guard).
-- The newly activated worker also calls `clients.matchAll()` and navigates visible same-scope window clients. This supports previously installed versions that lack the new `controllerchange` listener. It does not delete localStorage or older caches.
-- **Caveat:** The sessionStorage guard keys on `controller.scriptURL`, which is usually the stable `sw.js` URL, not the content hash. It may therefore suppress later controllerchange-triggered reloads in the same session; worker-driven `client.navigate()` is the complementary mechanism. Avoid treating this as a fully general reload-on-every-version solution without further testing.
-- Old-cache retention trades storage for safe transition. This source does **not** implement bounded pruning; future adopters must evaluate storage pressure and a safe eviction policy rather than assuming indefinite retention is ideal.
+## Why this design
+- A precached navigation page is served from the worker's **own** build, avoiding an old HTML/new JS or new HTML/old JS mismatch.
+- A **network-only release probe** bypasses service-worker interception and HTTP cache, so a running old app can learn that a new deployment exists without first updating its own cached HTML.
+- The client calls `registration.update()`, verifies the controlling worker's **build identifier** via `MessageChannel`, and reloads on a genuinely newer activated build. The old script-URL-based sessionStorage guard was flawed because `sw.js` has the same URL for every release.
+- A new worker precaches its entire bundle before activation. It also navigates visible older clients, helping clients whose old JavaScript predates the new update logic.
+- Old versioned caches are retained to serve in-flight requests for older hashed assets. The module currently does **not** prune caches.
 
-## Verification
-1. Run the project's automated tests and production build. **Confirm deployment success**, not merely that a commit was pushed.
-2. On the real target device, load the deployed app online and confirm its JavaScript actually initializes: populated dynamic controls, not just static HTML/CSS.
-3. Verify the changed UI and saved state; close and reopen.
-4. Switch to Airplane Mode and confirm launch and gameplay or application use.
-5. Check saved state again after restarting offline.
-6. Test an update while an old client exists; ensure its hashed JS/CSS remain retrievable during transition.
+## Verification for every integration
+1. Confirm GitHub Actions **tests, build, and deploy** all pass; a pushed commit alone is not deployment.
+2. Install release A on the actual target iPhone and confirm dynamic JavaScript initializes and saved state survives reopening.
+3. Deploy release B; open the existing installed PWA online. Verify the new build appears, the version/status is meaningful, and Check for Updates can report results.
+4. Deploy release C and repeat **without reinstalling or clearing storage**. The repeated-release test is important because the previous script-URL guard appeared to work once but failed later.
+5. Verify offline launch after each transition and wallet/ownership/loadout/progress or equivalent local state before and after updates.
+6. Verify failed or interrupted update still leaves the previous complete offline build playable.
 
-## Evidence and boundaries
-Pop Squadron's successful device verification covers its observed release transition, persistent wallet/loadout/progress, and offline launch. It does **not** establish that this approach is optimal for all PWAs or that every browser and update scenario has been tested. A later October 2026 release reproduced a different symptom: Chrome showed newly deployed Primary Weapons, while the iPhone Home Screen installation continued showing only the old Forward Cannon even after closing and reopening. Adding activation-time visible-client navigation plus the controllerchange listener was deployed successfully and the user confirmed it worked. The original incident also involved a failed CI deployment: always inspect test and deploy status before attributing a persistent old version solely to caching.
+## Limitations
+- Safari controls service-worker scheduling and page lifetime. The update cannot be guaranteed to be instantaneous in every browser or connection condition.
+- The old-client `client.navigate()` activation fallback can refresh a visible game unexpectedly; projects with active editing or long sessions should adapt this to a safe update prompt.
+- Release metadata is included in the precache but explicitly bypassed in the worker's fetch handler; verify the network probe on the deployment host.
+- The current source retains older caches indefinitely; evaluate bounded safe cleanup when storage pressure becomes material.
+- The observed iPhone success verifies the transition to this new method, not the full three-release test sequence.
