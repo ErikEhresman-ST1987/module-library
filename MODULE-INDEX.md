@@ -4,7 +4,7 @@ Fast lookup for modules that have passed the Module Library's Six-Point Module G
 
 | Module | Function | Useful when | Proven source projects |
 |---|---|---|---|
-| [Versioned Offline Build](modules/versioned-offline-build/) | Generates a complete hash-versioned offline cache for Vite/GitHub Pages builds, retaining old hashed assets across service-worker updates. | A compiled static game needs same-release HTML/JS/CSS offline and safe installed-PWA updates. | Pop Squadron (device-tested; specialized variant) |
+| [Versioned Offline Build](modules/versioned-offline-build/) | Generates a complete hash-versioned offline cache for Vite/GitHub Pages builds, retaining old hashed assets and refreshing visible installed clients across service-worker updates. | A compiled static game needs same-release HTML/JS/CSS offline and safe installed-PWA updates, including an older installed client stuck on a previous release. | Pop Squadron (device-tested; specialized variant) |
 | [Offline App Shell](modules/offline-app-shell/) | Provides a small network-first service worker with app-shell caching, old-cache cleanup, and navigation fallback. | A static browser app or game needs dependable offline startup and refreshed online assets. | Personal Dashboard; Follow-Up Tracker; Hall Cleaning List; Stranded Colony |
 | [JSON Backup File](modules/json-backup-file/) | Handles generic JSON backup envelope creation, serialization, browser download, and safe file reading/parsing. | A local-first app needs user-owned export/restore files without coupling the module to the app's data schema. | Personal Dashboard; Follow-Up Tracker; Simple Notebook |
 | [Local JSON State](modules/local-json-state/) | Loads, saves, and clears JSON state in localStorage while leaving defaults/normalization to the host. | A lightweight app or game needs simple durable on-device state. | Personal Dashboard; Follow-Up Tracker; Hall Cleaning List; Little Field Farm; Haven's Reach |
@@ -36,7 +36,7 @@ Project-specific validation, state shape, UI, naming, and policy stay with the p
 
 | Item | Function | Proven source |
 |---|---|---|
-| [Installed PWA Stale-Asset Recovery](lessons/pwa-stale-asset-recovery.md) | Recovery procedure for a reproduced mixed/stale installed-PWA release, including physical asset renaming when ordinary cache busting fails. | Stranded Colony |
+| [Installed PWA Stale-Asset Recovery](lessons/pwa-stale-asset-recovery.md) | Recovery procedures for stale installed-PWA releases: preserved hashed assets, visible-client refresh, and physical renaming only when needed. | Stranded Colony; Pop Squadron |
 | [PWA Shell Release Order](lessons/pwa-release-order.md) | Publish changed shell files before the new service worker so a new cache does not activate against unavailable files. | Personal Dashboard |
 | [Storage Key Is Not the Release Version](lessons/storage-key-is-not-release-version.md) | Keeps durable data namespace, schema version, application release, and service-worker cache version conceptually separate. | Personal Dashboard; reinforced across local-first projects |
 
