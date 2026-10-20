@@ -58,3 +58,17 @@ A later Wing Guns release again deployed successfully to GitHub Pages but stayed
 **Observed outcome:** GitHub Actions tests, build, and Pages deploy passed; the user reported the installed iPhone app pulled the new update down almost instantly. This confirms **one** successful device transition. Multiple consecutive release transitions and interrupted-update/offline regression checks remain to be demonstrated.
 
 **Canonical files and integration:** [Version-Aware Offline Build](../modules/versioned-offline-build/). For new Vite/GitHub Pages PWA work, inspect and adapt this method instead of reintroducing the fixed-script-URL guard. Do not infer guaranteed instantaneous updates on all Safari installations.
+
+## Follow-up: build-ID refresh guard prevented later iPhone updates (Pop Squadron, 2026-10)
+
+The first version-aware update implementation initially worked on the installed iPhone. After the next Missiles deployment, the app detected a newer release but displayed **“Update detected but reload did not complete · Tap Check for Updates.”** The release had passed CI and Pages deployment, but the running page remained old.
+
+**Identified application defect:** The client wrote the target build ID into sessionStorage *before* verifying the new page had loaded, and refused another refresh when the same build ID was encountered. A stalled navigation therefore disabled the manual recovery path.
+
+**Corrected approach:** Keep a per-build automatic-loop guard, but allow explicit **Check for Updates** to retry regardless of that marker. Navigate via `window.location.replace()` to a release-specific URL query parameter instead of `window.location.reload()` on the same URL. When the page's embedded build ID matches the published `release.json`, remove the obsolete session guard. Do not clear localStorage, uninstall, or delete caches.
+
+**CI lesson:** The first correction failed tests because a pre-existing test still asserted `window.location.reload()`. Update tests to verify intended behavior whenever an API intentionally changes. After the test was fixed, the final CI run passed tests, build, and Pages deployment.
+
+**Observed device result:** The installed iPhone app displayed **“Up to date · Version 50bba0d73”**, matching deployed commit `50bba0d733c88673a885a81a785780420cd85a1c`. The user confirmed the correction worked. This validates the recovery, not guaranteed immediate updates in all subsequent releases.
+
+**Reuse:** The [Version-Aware Offline Build module](../modules/versioned-offline-build/) now contains the updated client and instructions. Always test at least A→B→C installed-PWA transitions and a manual retry after a failed automatic refresh.
