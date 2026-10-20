@@ -4,15 +4,15 @@
 Builds a **complete, versioned offline asset cache** for a Vite-generated static application and serves HTML from the same release as its compiled JS/CSS. A separate browser registration helper checks for updates when online.
 
 ## Proven source
-[Pop Squadron](https://github.com/ErikEhresman-ST1987/pop-squadron), increment 9.2.1. The installed iPhone game initially displayed a static hangar without JavaScript initialization during a release transition. After the cache transition correction was deployed, the user confirmed successful launch, persistent purchases and wallet, and Airplane Mode play.
+[Pop Squadron](https://github.com/ErikEhresman-ST1987/pop-squadron), increment 9.2.1, followed by the October 2026 installed-app refresh correction. The installed iPhone game initially displayed a static hangar without JavaScript initialization during a release transition. After the cache transition correction was deployed, the user confirmed successful launch, persistent purchases and wallet, and Airplane Mode play.
 
 This is an **alternative** to [Offline App Shell](../offline-app-shell/), not its replacement. Choose the strategy based on the project's build and update needs.
 
 ## Files
-- [prepare-offline.mjs](prepare-offline.mjs): original, working Pop Squadron build script; hashes built assets, emits `dist/sw.js`, precaches the build and serves cached navigation HTML.
-- [offline-registration.js](offline-registration.js): original browser registration helper; checks for updated service workers on online launch.
+- [prepare-offline.mjs](prepare-offline.mjs): updated, device-confirmed Pop Squadron build script; hashes built assets, emits `dist/sw.js`, precaches the build and serves cached navigation HTML.
+- [offline-registration.js](offline-registration.js): updated browser registration helper; checks for updated service workers on online launch.
 
-Both files are preserved as source implementations. They are **copy-and-adapt**, not a plug-and-play dependency.
+Both files track the proven Pop Squadron implementation, including its later installed-app update correction. They are **copy-and-adapt**, not a plug-and-play dependency.
 
 ## Integration
 1. Use a Vite build that outputs `dist/index.html`, `dist/manifest.webmanifest` and hashed compiled assets.
@@ -25,7 +25,9 @@ Both files are preserved as source implementations. They are **copy-and-adapt**,
 - The navigation handler returns HTML from the worker's **own** precached release. A fresh network HTML response referencing newer compiled assets could break an older worker's offline bundle.
 - Do **not** immediately delete previous versioned caches when a new worker activates. Existing clients may still request hashed assets from their prior release.
 - When an asset is missing from the current cache, look in retained older caches before fetching it from the network.
-- The online registration helper calls `registration.update()` to request an update check; it does not guarantee an immediate refresh of an already-open tab.
+- The online registration helper calls `registration.update()` and listens for `controllerchange`, reloading an existing controlled online client once per worker script URL (sessionStorage guard).
+- The newly activated worker also calls `clients.matchAll()` and navigates visible same-scope window clients. This supports previously installed versions that lack the new `controllerchange` listener. It does not delete localStorage or older caches.
+- **Caveat:** The sessionStorage guard keys on `controller.scriptURL`, which is usually the stable `sw.js` URL, not the content hash. It may therefore suppress later controllerchange-triggered reloads in the same session; worker-driven `client.navigate()` is the complementary mechanism. Avoid treating this as a fully general reload-on-every-version solution without further testing.
 - Old-cache retention trades storage for safe transition. This source does **not** implement bounded pruning; future adopters must evaluate storage pressure and a safe eviction policy rather than assuming indefinite retention is ideal.
 
 ## Verification
@@ -37,4 +39,4 @@ Both files are preserved as source implementations. They are **copy-and-adapt**,
 6. Test an update while an old client exists; ensure its hashed JS/CSS remain retrievable during transition.
 
 ## Evidence and boundaries
-Pop Squadron's successful device verification covers its observed release transition, persistent wallet/loadout/progress, and offline launch. It does **not** establish that this approach is optimal for all PWAs or that every browser and update scenario has been tested. The original incident also involved a failed CI deployment: always inspect test and deploy status before attributing a persistent old version solely to caching.
+Pop Squadron's successful device verification covers its observed release transition, persistent wallet/loadout/progress, and offline launch. It does **not** establish that this approach is optimal for all PWAs or that every browser and update scenario has been tested. A later October 2026 release reproduced a different symptom: Chrome showed newly deployed Primary Weapons, while the iPhone Home Screen installation continued showing only the old Forward Cannon even after closing and reopening. Adding activation-time visible-client navigation plus the controllerchange listener was deployed successfully and the user confirmed it worked. The original incident also involved a failed CI deployment: always inspect test and deploy status before attributing a persistent old version solely to caching.
