@@ -36,3 +36,15 @@ A Vite-built installed PWA displayed its static hangar while dynamic JavaScript-
 **Reusable lesson:** When an installed PWA appears frozen, distinguish static HTML loading from JavaScript initialization, verify the latest CI deployment actually succeeded, and ensure old clients can still obtain their original hashed assets during worker transitions. Preserve localStorage separately from caches. See [Versioned Offline Build](../modules/versioned-offline-build/) for the working source variant.
 
 This case supports the tested correction, but does not independently prove that cache deletion was the sole cause of every observed startup failure.
+
+## Additional proven case: installed Safari PWA does not refresh after a successful deployment (Pop Squadron, 2026-10)
+
+After adding four Primary Weapons, GitHub Actions passed tests, built, and published the latest Pop Squadron release. Chrome showed the new weapons, but the iPhone Home Screen installation still showed only Forward Cannon and an empty Specialized Weapons section. Opening the installed app online, waiting, force-closing, and reopening did not update it.
+
+**Cause boundary:** The prior registration helper requested `registration.update()` but did not explicitly refresh an already-open page when a new worker activated. This is a plausible explanation consistent with the observed behavior, not a browser-internals proof.
+
+**Correction:** Preserve the existing same-release cached HTML/JS/CSS and older hashed assets. Add a `controllerchange` listener in the registration helper to reload an online, previously controlled client with a sessionStorage guard. In the generated worker's `activate` handler, after `clients.claim()`, enumerate same-scope visible window clients and call `client.navigate(client.url)`. This second path can refresh an old installed client whose JavaScript predates the new listener. No localStorage keys or caches are cleared.
+
+**Verification:** The corrective GitHub Pages deployment completed successfully and the user reported, “That worked!” on the installed iPhone app. This confirms the combined fix for that incident, not independent effectiveness of each component or all future Safari versions. The guard currently uses the service-worker script URL, which may remain stable between versions; future adopters should validate repeated updates across multiple releases and consider a true build-version token.
+
+**Reusable files:** [Versioned Offline Build](../modules/versioned-offline-build/) includes the updated source implementations. Avoid recommending app removal or Safari website-data clearing before preserving local saves.
