@@ -47,13 +47,7 @@ self.addEventListener('activate', event => {
     // be running an older build and need its hashed JavaScript/CSS assets.
     // A later maintenance release can prune caches after clients have closed.
     await self.clients.claim();
-    // Refresh visible legacy installed clients that lack controllerchange support.
-    // No saved-game data or old asset caches are deleted.
-    const clients = await self.clients.matchAll({ type: 'window', includeUncontrolled: false });
-    for (const client of clients) {
-      if (client.visibilityState !== 'visible' || !client.url.startsWith(self.location.origin + SCOPE)) continue;
-      try { await client.navigate(client.url); } catch { /* Client may have closed. */ }
-    }
+    // Navigation is handled by the page after gameplay ends.
   })());
 });
 self.addEventListener('message', event => {
@@ -68,9 +62,17 @@ self.addEventListener('fetch', event => {
   event.respondWith((async () => {
     const cache = await caches.open(CACHE);
     if (request.mode === 'navigate') {
-      // The page must come from the SAME precached build as its JS and CSS.
-      // A network-first HTML response could reference a newer bundle than
-      // the active service worker has cached, breaking offline startup.
+      // Explicit release navigation must not return stale cached HTML.
+      // Fetch the deployed document online; hashed assets are resolved from
+      // network or their own versioned cache. Offline navigation still uses
+      // the coherent precached document below.
+      if (url.searchParams.has('release')) {
+        try {
+          const response = await fetch(request, { cache: 'no-store' });
+          if (response.ok) return response;
+        } catch { /* Offline: use this worker's cached page. */ }
+      }
+      // Normal offline navigation stays pinned to this worker's own bundle.
       const page = await cache.match(SCOPE + 'index.html');
       if (page) return page;
       return fetch(request);
