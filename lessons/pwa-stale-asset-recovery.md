@@ -72,3 +72,13 @@ The first version-aware update implementation initially worked on the installed 
 **Observed device result:** The installed iPhone app displayed **“Up to date · Version 50bba0d73”**, matching deployed commit `50bba0d733c88673a885a81a785780420cd85a1c`. The user confirmed the correction worked. This validates the recovery, not guaranteed immediate updates in all subsequent releases.
 
 **Reuse:** The [Version-Aware Offline Build module](../modules/versioned-offline-build/) now contains the updated client and instructions. Always test at least A→B→C installed-PWA transitions and a manual retry after a failed automatic refresh.
+
+## Follow-up: explicit release navigation must not reload stale cached HTML (Pop Squadron, October 20, 2026)
+
+**Observed:** The installed iPhone Home Screen app repeatedly detected a new pink-balloon release but refreshed back to old content. Force-closing did not help, although GitHub Pages deployment had succeeded. The previous service worker handled navigation cache-first, so a release-specific URL could still receive stale HTML. A prior attempt to search other precached releases was not reliable on the device.
+
+**Correction:** Keep normal/offline navigation pinned to coherent cached HTML. For explicit `?release=` navigation, first request the deployed HTML with `fetch(request, { cache: 'no-store' })`, falling back to the current worker cache if offline. Continue retaining older hashed asset caches, bypassing worker interception for `release.json`, and verifying the controlling worker's build before reload. Do not clear localStorage or reinstall the app.
+
+**Verification boundary:** User screenshot showed `Up to date · Version d6bfb2bdb` and the newly integrated pink balloon. A subsequent deployment of all remaining balloon artwork (`6cd2075ed`) was reported working on iPhone. This supports successful transitions, but long-term reliability across many updates remains unproven.
+
+**Reusable source:** [Versioned Offline Build](../modules/versioned-offline-build/) was synchronized with the tested Pop Squadron commit `6cd2075ed92ac530e9b5fd233e70b599b5a1197d`. The exact reference is preserved at the game's `stable/artwork-and-pwa-2026-10-20` branch. Tests should include repeated A→B→C installed-PWA upgrades, interrupted upgrades, and offline startup without data loss.
