@@ -5,6 +5,17 @@ const refreshKey = 'pop-squadron-refreshed-build';
 let registration;
 let checking = false;
 let refreshing = false;
+let pendingRefresh = null;
+function missionActive() {
+  const game = document.getElementById('game');
+  return Boolean(game && !game.hidden);
+}
+function applyPendingRefresh() {
+  if (!pendingRefresh || missionActive()) return;
+  const { version, manual } = pendingRefresh;
+  pendingRefresh = null;
+  refreshFor(version, manual);
+}
 // An automatic retry is limited per release, but manual retries are never blocked.
 
 function show(message) {
@@ -12,8 +23,27 @@ function show(message) {
   if (element) element.textContent = message;
 }
 function currentVersion() { return build.slice(0, 9); }
-function refreshFor(version, manual = false) {
+async function refreshFor(version, manual = false) {
   if (refreshing || !navigator.onLine || !version || version === build) return;
+  if (missionActive()) {
+    pendingRefresh = { version, manual };
+    show('Update ready · Will install when you return to hangar');
+    return;
+  }
+  // Activation can precede controllerchange. Reloading before the new worker
+  // controls this page simply returns the previous cached HTML on iOS.
+  const controller = navigator.serviceWorker.controller;
+  const controllingBuild = controller ? await readWorkerBuild(controller) : null;
+  if (controllingBuild !== version) {
+    pendingRefresh = { version, manual };
+    show('Update installing · Waiting for new version to take control');
+    return;
+  }
+  if (missionActive()) {
+    pendingRefresh = { version, manual };
+    show('Update ready · Will install when you return to hangar');
+    return;
+  }
   try {
     // The stored value limits automatic navigation loops, not explicit user retries.
     if (!manual && sessionStorage.getItem(refreshKey) === version) {
@@ -57,13 +87,13 @@ export async function checkForUpdates(manual = false) {
     const worker = registration.waiting || registration.installing;
     if (worker) {
       worker.addEventListener('statechange', () => {
-        if (worker.state === 'activated') refreshFor(latest, manual);
+        if (worker.state === 'activated') void refreshFor(latest, manual);
         if (worker.state === 'redundant') show('Update failed · Tap Check for Updates');
       });
     } else if (navigator.serviceWorker.controller) {
       // update() may already have activated the new worker.
       const activeBuild = await readWorkerBuild(navigator.serviceWorker.controller);
-      if (activeBuild === latest) refreshFor(latest, userRequested);
+      if (activeBuild === latest) void refreshFor(latest, manual);
       else show('New version found · Retry Check for Updates shortly');
     } else show('Update installing · Reopen when complete');
   } catch (error) {
@@ -81,6 +111,7 @@ function readWorkerBuild(worker) {
   });
 }
 export async function setupOffline() {
+  window.addEventListener('pop-squadron-hangar', applyPendingRefresh);
   const button = document.getElementById('check-updates');
   if (button) button.addEventListener('click', () => { void checkForUpdates(true); });
   if (!('serviceWorker' in navigator)) {
@@ -95,7 +126,10 @@ export async function setupOffline() {
     navigator.serviceWorker.addEventListener('controllerchange', () => {
       if (!navigator.onLine || !navigator.serviceWorker.controller) return;
       void readWorkerBuild(navigator.serviceWorker.controller).then(version => {
-        if (version && version !== build) refreshFor(version);
+        if (!version || version === build) return;
+        const manual = pendingRefresh?.version === version && pendingRefresh.manual;
+        pendingRefresh = null;
+        void refreshFor(version, manual);
       });
     });
     const worker = registration.installing || registration.waiting || registration.active;
