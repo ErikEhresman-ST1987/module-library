@@ -12,7 +12,7 @@ This is a specialized **copy-and-adapt** Vite/GitHub Pages module, not a generic
 - [prepare-offline.mjs](prepare-offline.mjs) — builds `dist/release.json`, hashes and precaches a coherent build, generates `dist/sw.js`, bypasses cache for release probes, identifies its own build via `BUILD_VERSION` messages, and retains older caches.
 - [offline-registration.js](offline-registration.js) — registers with `updateViaCache: 'none'`, checks release metadata using `cache: 'no-store'`, checks on launch/resume/online and by manual action, compares worker build identity, and navigates to a release-specific URL when the new worker is active. Explicit user-triggered retries remain available even if an earlier automatic refresh did not complete.
 
-The files above are synchronized with Pop Squadron's working source. Keep them together: the worker message protocol and release identifiers must agree.
+The files above are synchronized byte-for-byte with Pop Squadron's user-tested artwork milestone (`6cd2075ed92ac530e9b5fd233e70b599b5a1197d`, October 20, 2026). The installed iPhone app reported the matching build after earlier release failures; the next release's balloon artwork was also reported working. This is evidence of successful recovery and further operation, **not** proof that every future update will succeed. Keep them together: the worker message protocol and release identifiers must agree.
 
 ## Required host integration
 1. Configure Vite's base for the host path and define a **build-time constant** `__POP_BUILD_ID__` using the same release identifier as the postbuild script. For Pop Squadron:
@@ -28,11 +28,11 @@ The files above are synchronized with Pop Squadron's working source. Keep them t
 6. Publish the whole build together. Preserve localStorage keys and durable state independently of build/cache versions. Never clear browser storage to force an update.
 
 ## Why this design
-- A precached navigation page is served from the worker's **own** build, avoiding an old HTML/new JS or new HTML/old JS mismatch.
+- Normal/offline navigation serves the worker's **own** precached HTML; an explicit `?release=` update navigation attempts a **network `no-store` HTML fetch**, falling back to the cached page if offline. This is designed to break repeated stale-HTML reloads without losing offline startup. Keep hashed assets available for transitioning clients.
 - A **network-only release probe** bypasses service-worker interception and HTTP cache, so a running old app can learn that a new deployment exists without first updating its own cached HTML.
 - The client calls `registration.update()`, verifies the controlling worker's **build identifier** via `MessageChannel`, and reloads on a genuinely newer activated build. The old script-URL-based sessionStorage guard was flawed because `sw.js` has the same URL for every release.
 - **Do not permanently block an update attempt just because it was attempted.** An automatic per-release session guard prevents navigation loops, but the manual Check for Updates action bypasses that guard. Navigation uses `window.location.replace()` with a release-specific query parameter rather than reloading an identical URL. After the running page confirms that its embedded build ID equals the published release ID, the previous refresh guard is cleared.
-- A new worker precaches its entire bundle before activation. It also navigates visible older clients, helping clients whose old JavaScript predates the new update logic.
+- A new worker precaches its entire bundle before activation and claims clients. The current implementation **does not** force-navigate visible clients on activation; the page's `controllerchange` and hangar-safe pending-refresh logic handle navigation. This avoids interrupting active gameplay.
 - Old versioned caches are retained to serve in-flight requests for older hashed assets. The module currently does **not** prune caches.
 
 ## Verification for every integration
@@ -46,7 +46,17 @@ The files above are synchronized with Pop Squadron's working source. Keep them t
 
 ## Limitations
 - Safari controls service-worker scheduling and page lifetime. The update cannot be guaranteed to be instantaneous in every browser or connection condition.
-- The old-client `client.navigate()` activation fallback can refresh a visible game unexpectedly; projects with active editing or long sessions should adapt this to a safe update prompt.
+- An installed iPhone PWA can retain an older service worker, so even a deployed worker-side repair may not affect its very first refresh. Validate the installed device rather than assuming the deployed worker is immediately in control.
 - Release metadata is included in the precache but explicitly bypassed in the worker's fetch handler; verify the network probe on the deployment host.
 - The current source retains older caches indefinitely; evaluate bounded safe cleanup when storage pressure becomes material.
 - The observed iPhone recovery verifies that the corrected release loaded and identified itself as up to date; it does not prove every future automatic update will succeed.
+
+## October 20, 2026 — additional verified incident and current reference
+
+**Observed failure:** After a successful pink-balloon deployment, the installed Home Screen PWA repeatedly said a new version was ready, reloaded when Check for Updates was tapped, and continued to show old content. Force-closing did not resolve it. The deployment itself had succeeded.
+
+**Change:** Pop Squadron's generated service worker was changed to treat a navigation with the `release` query parameter as an explicit online update request: attempt `fetch(request, { cache: 'no-store' })` and use the successful network HTML; if unavailable, use the worker's precached HTML. Ordinary navigations remain cache-first. The page also checks controlling-worker build identity, defers refresh while gameplay is active, and preserves manual retry.
+
+**Device evidence:** The user showed an installed-iPhone screenshot reading `Up to date · Version d6bfb2bdb` with the new pink balloon visible. A later deployment `6cd2075ed92ac530e9b5fd233e70b599b5a1197d` passed GitHub Actions and the user confirmed all balloon artwork worked. The latter confirmation supports the successful installed-app artwork update, although it did not include a screenshot of the displayed build ID. This is a promising multi-release result, not a guarantee of permanent Safari update reliability.
+
+**Stable source:** [Pop Squadron stable artwork/PWA branch](https://github.com/ErikEhresman-ST1987/pop-squadron/tree/stable/artwork-and-pwa-2026-10-20) pins the exact implementation from the user-tested milestone. The library copies of `offline-registration.js` and `prepare-offline.mjs` were synchronized from that commit. Adapt game-specific DOM selectors, active-session guard, base path, build constant, and cache prefix before reusing in other apps.
