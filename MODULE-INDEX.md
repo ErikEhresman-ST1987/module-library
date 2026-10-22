@@ -31,6 +31,7 @@ Project-specific validation, state shape, UI, naming, and policy stay with the p
 | Item | Function | Proven in |
 |---|---|---|
 | [Local-First PWA Release Verification](verification/local-first-pwa-release.md) | Reusable online, persistence, installed-device, and offline release checks. | Personal Dashboard; Follow-Up Tracker; Simple Notebook; Hall Cleaning List; Stranded Colony |
+| [GitHub Actions Deployment Verification](verification/github-actions-deployment-verification.md) | Verify push-triggered GitHub Pages workflow runs by matching commit SHA, status, job steps, and actual publish outcome using connected GitHub fetch. | Pop Squadron (confirmed Mission 23 deployment) |
 
 ## Proven Fixes and Lessons
 
