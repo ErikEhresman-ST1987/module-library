@@ -21,9 +21,9 @@
 At meaningful checkpoints after verification and real use, ask whether a reusable improvement was discovered: code, configuration, planning method, verification recipe, fix, or lesson.
 1. Identify the concrete friction and evidence from the project.
 2. Check whether an existing library item covers it; prefer improving that item over creating a duplicate.
-3. Apply the README's Six-Point Module Gate and extraction rules. Do not promote hypothetical, untested or tightly project-specific work.
+3. Apply the README's Proven Value and Reuse Test. One demonstrated project is enough when future usefulness is plausible. Do not promote hypothetical or unverified code as proven; preserve evidenced failed attempts as lessons when useful.
 4. Extract the smallest coherent reusable part; keep project-specific assumptions in the project.
-5. Verify the extracted/adapted part and document the evidence and remaining limits. Real-project success alone does not guarantee independent reuse.
+5. Verify the extracted/adapted part and document the evidence and remaining limits. A real-project verification can establish value; independently verify adaptation when integrating into another project.
 6. Propose a precise library change for user approval before modifying canonical content. Do not silently overwrite proven parts or change working projects.
 7. Update the authoritative item, its Improvement Record and the index if a new item is admitted. Existing projects are not automatically back-ported.
 
