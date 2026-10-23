@@ -4,6 +4,27 @@ For the complete retrieval, contribution, and Improvement Record procedure, begi
 
 Fast lookup for reusable parts admitted through the Module Library's Proven Value and Reuse Test.
 
+## Problems We've Solved
+
+**Start with the problem, not a technical name.** These are examples of everyday descriptions a user might give. Follow the links to examine the solution, its verification and limitations; a match is a starting point, not proof that it fits every project.
+
+| Problem or goal in everyday language | Where to look |
+|---|---|
+| **“My installed app is stuck on an old version,” “updates aren't showing up,” or “an older installed game won't refresh.”** | [Versioned Offline Build](modules/versioned-offline-build/) and [Stale-Asset Recovery](lessons/pwa-stale-asset-recovery.md); [Release Verification](verification/local-first-pwa-release.md) |
+| **“I want the app to open without internet,” or “it should load reliably after I add it to my phone.”** | [Offline App Shell](modules/offline-app-shell/), [PWA Manifest Template](templates/pwa-manifest/), and [Release Verification](verification/local-first-pwa-release.md) |
+| **“An app update broke the offline version,” or “the new version seems to be mixing old and new files.”** | [PWA Shell Release Order](lessons/pwa-release-order.md), [Versioned Offline Build](modules/versioned-offline-build/), and [Stale-Asset Recovery](lessons/pwa-stale-asset-recovery.md) |
+| **“I need to back up my app's information to a file and restore it later.”** | [JSON Backup File](modules/json-backup-file/) |
+| **“My app forgets what I entered after I close or reopen it.”** | [Local JSON State](modules/local-json-state/) — assess whether persistence is the actual cause before applying |
+| **“An update should not erase my saved information,” or “I don't want app versions confused with saved-data versions.”** | [Storage Key Is Not the Release Version](lessons/storage-key-is-not-release-version.md) and [Local JSON State](modules/local-json-state/) |
+| **“A name or note containing special characters displays incorrectly in generated page content.”** | [HTML Escape](modules/html-escape/) — applies to text inserted into generated HTML strings |
+| **“The app shows the wrong day around midnight,” or “daily items reset on the wrong date.”** | [Local Date Key](modules/local-date-key/) |
+| **“GitHub says I pushed an update, but I don't know whether the website actually deployed.”** | [GitHub Actions Deployment Verification](verification/github-actions-deployment-verification.md) |
+| **“I have an app idea but need to define what it should become and what it should not do.”** | [Goal Box Base](planning/goal-box-base.md) |
+| **“We've agreed on the goal; how do we choose the technical foundation and first useful piece?”** | [Project Foundation Base](planning/project-foundation-base.md) and [AI Project Planning Instructions](planning/ai-project-planning-instructions.md) |
+| **“We're building tiny technical steps that aren't meaningful to test,” or “the project keeps drifting away from the agreed plan.”** | [AI Project Planning Instructions](planning/ai-project-planning-instructions.md) |
+
+**For future contributions:** Add or refine a plain-language problem entry whenever a verified solution or lesson addresses a problem not already discoverable here. Multiple descriptions may point to the same item. Keep this table concise and link to the existing authoritative source; do not duplicate implementations or invent symptoms not supported by project experience.
+
 | Module | Function | Useful when | Proven source projects |
 |---|---|---|---|
 | [Versioned Offline Build](modules/versioned-offline-build/) | Generates a coherent versioned offline cache plus a network-only release probe, build-identified service-worker refresh, release-specific navigation, and retryable manual Check for Updates control, retaining older hashed assets for safe transitions. | A compiled static game needs same-release HTML/JS/CSS offline and safe installed-PWA updates, including an older installed client stuck on a previous release; use this version-aware method for new Vite/GitHub Pages PWAs when appropriate. | Pop Squadron (device-tested; specialized variant) |
@@ -15,7 +36,7 @@ Fast lookup for reusable parts admitted through the Module Library's Proven Valu
 
 ## How to use this index
 
-Start here when a new project needs a capability that may already have been solved. Open the module folder, read its short contract, and decide whether it fits the current project's actual requirements.
+Start with the **Problems We've Solved** section using the user's symptoms or goal in everyday language; then consult the technical index below for other plausible matches. Open the module folder, read its short contract, and decide whether it fits the current project's actual requirements.
 
 Presence in this index means the item has demonstrated value, potentially in just one real project. It does **not** mean every future project should use it.
 
