@@ -2,7 +2,7 @@
 
 For the complete retrieval, contribution, and Improvement Record procedure, begin with [START HERE](START-HERE.md).
 
-Fast lookup for modules that have passed the Module Library's Six-Point Module Gate.
+Fast lookup for reusable parts admitted through the Module Library's Proven Value and Reuse Test.
 
 | Module | Function | Useful when | Proven source projects |
 |---|---|---|---|
@@ -17,7 +17,7 @@ Fast lookup for modules that have passed the Module Library's Six-Point Module G
 
 Start here when a new project needs a capability that may already have been solved. Open the module folder, read its short contract, and decide whether it fits the current project's actual requirements.
 
-Presence in this index means the capability has already shown repeated real-world use. It does **not** mean every future project should use it.
+Presence in this index means the item has demonstrated value, potentially in just one real project. It does **not** mean every future project should use it.
 
 Project-specific validation, state shape, UI, naming, and policy stay with the project unless they independently earn reuse.
 
