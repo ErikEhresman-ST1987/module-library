@@ -1,5 +1,7 @@
 # Module Library
 
+**Start here for any new project or chat:** [START-HERE.md](START-HERE.md) explains how to retrieve proven parts, contribute verified improvements, and maintain compact Improvement Records. It is the universal AI-facing entry point.
+
 A small library of proven, discrete reusable code for Erik's lightweight browser apps and games.
 
 ## Purpose
