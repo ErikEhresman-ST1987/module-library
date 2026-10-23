@@ -9,6 +9,9 @@
 3. Read the actual item's contract, source, verification and limits before deciding to use it.
 4. For project planning, consult [AI Project Planning Instructions](planning/ai-project-planning-instructions.md), [Goal Box Base](planning/goal-box-base.md), and [Project Foundation Base](planning/project-foundation-base.md) as applicable.
 
+## Problem-first discovery — required
+The user describes a problem, symptom, frustration, or desired outcome in ordinary language. **Do not require the user to know or supply technical terminology, module names, file paths, or implementation details.** Translate their description into possible technical causes and search terms internally; search the [Problems We've Solved](MODULE-INDEX.md#problems-weve-solved) section first, then scan the rest of the index and linked lessons/modules for related symptoms and goals. Check plausible matches, including alternatives and known failures, before recommending reuse. Explain the result in the user's language, with technical names only when they help implementation. If no match exists, say so; do not invent a prior solution.
+
 ## Retrieve and apply (library → project)
 - At project startup, before a relevant capability is built, and when debugging recurring friction, check the library for a proven starting point.
 - Match the project's actual needs, dependencies, constraints and target devices; do not force adoption.
@@ -25,10 +28,10 @@ At meaningful checkpoints after verification and real use, ask whether a reusabl
 4. Extract the smallest coherent reusable part; keep project-specific assumptions in the project.
 5. Verify the extracted/adapted part and document the evidence and remaining limits. A real-project verification can establish value; independently verify adaptation when integrating into another project.
 6. Propose a precise library change for user approval before modifying canonical content. Do not silently overwrite proven parts or change working projects.
-7. Update the authoritative item, its Improvement Record and the index if a new item is admitted. Existing projects are not automatically back-ported.
+7. Update the authoritative item, its Improvement Record, and the index's plain-language problem lookup (for new items **and** new problems solved by existing items). Record the symptom or goal and link to the actual solution rather than duplicating code. Existing projects are not automatically back-ported.
 
 ## Compact Improvement Record
-For each reusable item, maintain a brief history in its own documentation (or link to an existing detailed lesson rather than duplicating it). Each meaningful attempt should record:
+For each reusable item, maintain a brief history in its own documentation (or link to an existing detailed lesson rather than duplicating it). Each meaningful attempt should record the **original problem in everyday words** so it can be recognized without knowing technical terms. Then capture:
 
 - **Failure or friction:** What actually went wrong or what recurring effort needed reducing?
 - **Change made:** What was tried, including unsuccessful or regressive attempts?
@@ -45,6 +48,6 @@ Distinguish **implemented → activated/deployed → verified → used/played �
 This library is a **toolbox and development touchstone, not a framework**. The project remains authoritative. Avoid unnecessary documentation, speculative modules and forced reuse. Preserve the minimum history needed to make future decisions better.
 
 ## Quick invocation for another chat
-“Consult `ErikEhresman-ST1987/module-library/START-HERE.md`, follow its retrieval and contribution instructions, and check the module index for relevant proven parts before implementing. After verified real use, identify any reusable improvements for review; do not change the library without my approval.”
+“Consult `ErikEhresman-ST1987/module-library/START-HERE.md`, follow its retrieval and contribution instructions, and search the index by the problem or goal in ordinary language before implementing. After verified real use, identify any reusable improvements for review; do not change the library without my approval.”
 
 If repository access is unavailable, say so and request access or the relevant files rather than claiming the library was consulted.
