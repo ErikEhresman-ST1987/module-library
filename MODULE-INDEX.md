@@ -1,5 +1,7 @@
 # Module Index
 
+For the complete retrieval, contribution, and Improvement Record procedure, begin with [START HERE](START-HERE.md).
+
 Fast lookup for modules that have passed the Module Library's Six-Point Module Gate.
 
 | Module | Function | Useful when | Proven source projects |
