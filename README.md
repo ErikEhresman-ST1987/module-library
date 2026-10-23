@@ -2,7 +2,7 @@
 
 **Start here for any new project or chat:** [START-HERE.md](START-HERE.md) explains how to retrieve proven parts, contribute verified improvements, and maintain compact Improvement Records. It is the universal AI-facing entry point.
 
-A small library of proven, discrete reusable code for Erik's lightweight browser apps and games.
+A practical library of proven reusable code, configurations, planning concepts, verification methods, and lessons for lightweight apps and games.
 
 ## Purpose
 
@@ -26,21 +26,21 @@ Library reuse is still a judgment call. If the proven part does not fit the curr
 
 ## What the Parts Bin May Preserve
 
-The primary contents are **proven code modules**: complete files or bounded sections of code that solve recurring problems and have earned reuse through real projects.
+The library preserves **proven code modules**: complete files or bounded sections of code that solve real problems and have a reasonable prospect of reuse, even when demonstrated in only one project.
 
 The same evidence-first rule also applies to four supporting kinds of proven parts:
 
 ### Proven configurations and templates
 
-Not every reusable wheel is JavaScript. A configuration, manifest structure, HTML shell, path convention, or other setup may belong here when substantially the same setup has been repeatedly used and proven.
+Not every reusable wheel is JavaScript. A configuration, manifest structure, HTML shell, path convention, or other setup may belong here when the setup has demonstrated value and could reasonably be reused.
 
 Preserve these only when reuse saves meaningful setup, debugging, or compatibility work. Do not create templates for hypothetical future projects.
 
 ### Micro-utilities
 
-Small functions can earn reuse too. Date helpers, escaping functions, file helpers, safe parsing, ID utilities, and similar code may be worth preserving when the same small solution keeps being rewritten.
+Small functions can earn reuse too. Date helpers, escaping functions, file helpers, safe parsing, ID utilities, and similar code may be worth preserving when the solution has demonstrated value and could reasonably be useful again.
 
-Size is not an admission criterion. A five-line function that is repeatedly needed and already debugged can be more valuable than a large abstraction.
+Size is not an admission criterion. A five-line function that is useful and already debugged can be more valuable than a large abstraction.
 
 Do not catalog trivial code merely because it can be reused. Preserve it when doing so actually reduces repeated work or increases reliability.
 
@@ -64,25 +64,24 @@ Updating the canonical part improves the starting point for future projects. Exi
 
 > **Populate by extraction, not invention.**
 
-Do not create modules for hypothetical future needs. Start with working project implementations. When substantially the same capability proves useful across projects, evaluate whether its smallest coherent implementation deserves extraction.
+Do not create modules for hypothetical future needs. Start with working project implementations. Once a capability has demonstrated real value and could reasonably be useful again, consider preserving its smallest coherent implementation—even after one project.
 
-## Six-Point Module Gate
+## Proven Value and Reuse Test
 
-A candidate module should be evaluated against these questions:
+Use three simple questions, not a rigid scoring gate:
 
-1. **Repeated need** — Has essentially the same capability appeared in at least two real projects?
-2. **Clear ownership** — Is its responsibility clearly bounded?
-3. **Low coupling** — Can it operate without knowing much about the application around it?
-4. **Real friction reduction** — Would reuse actually save development, debugging, or maintenance effort?
-5. **Adaptability** — Can another project use or adapt it without fighting assumptions inherited from the original project?
-6. **Proven implementation** — Has it already been demonstrated to work reliably in a real project?
+1. **Demonstrated value** — Has this code, concept, configuration, process, verification method, or lesson solved a real problem or produced a useful, evidenced result?
+2. **Potential reuse** — Is there a reasonable prospect that it could help another project or future development decision? One real project is sufficient; repeated use is not required.
+3. **Clear preservation** — Can we concisely explain when to use it, what was verified, and its known limits or adaptation needs?
 
-These are a judgment gate, not a mechanical score. A candidate does not need a bureaucratic 6/6 when one criterion is genuinely inapplicable, but uncertainty is not a reason to promote speculative code.
+These are practical judgment questions, **not a bureaucratic checklist**. Small utilities, coupled code that can be adapted, and useful failed experiments documented as lessons are welcome when they add real value. Do not label unsuccessful code as a proven implementation. Prefer a clear, useful record over speculative generalization.
+
+Clear responsibility, low coupling, adaptability, and repeated use are helpful qualities, **not admission prerequisites**. Preserve only what has evidence and a plausible future use; do not fill the library with hypothetical or trivial material.
 
 ## Extraction Rules
 
 - Build for the current project first.
-- Extract only after evidence of reuse appears.
+- Extract when real value is demonstrated and future reuse is plausible; a second project is not necessary.
 - Extract the smallest coherent capability that provides useful reuse.
 - Prefer one clear responsibility and a small documented interface.
 - Preserve project-specific behavior in the project.
@@ -93,7 +92,7 @@ These are a judgment gate, not a mechanical score. A candidate does not need a b
 
 ## Candidate Workflow
 
-**Project need → working implementation → real use → repeated need observed → Six-Point Module Gate → extract/adapt → verify independently → make available for future projects**
+**Project need → demonstrated value and evidence → Proven Value and Reuse Test → preserve/extract → document verification and limits → make available for future projects**
 
 When beginning a future project, inspect this library for useful proven starting points. Library presence is evidence that a capability has been useful before; it is not evidence that the current project needs it.
 
@@ -103,7 +102,7 @@ Each admitted module should record, compactly:
 
 - what responsibility it owns;
 - what it deliberately does not own;
-- source project(s) that established the repeated need;
+- source project(s) that established the value;
 - expected inputs/outputs or public interface;
 - assumptions and dependencies;
 - how to integrate it;
@@ -116,4 +115,4 @@ Keep documentation proportional to the module. The library should reduce work, n
 
 Repository foundation established. The library currently contains admitted reusable parts documented in `MODULE-INDEX.md`.
 
-Continue auditing existing and future projects for code we are repeatedly writing and debugging. Apply the Six-Point Module Gate, then extract the smallest useful proven part.
+Continue auditing existing and future projects for valuable reusable code, concepts, verification methods, and lessons. Apply the Proven Value and Reuse Test, then preserve the smallest useful proven part or clearly labeled lesson.
