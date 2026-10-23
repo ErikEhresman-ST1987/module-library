@@ -3,6 +3,8 @@
 **Type:** Reusable AI-facing operating instructions  
 **Purpose:** Apply the Goal Box and Project Foundation bases consistently without turning them into bureaucracy or reducing development to microscopic technical changes.
 
+Before planning or implementation, read [START HERE](../START-HERE.md) for the library's two-way reuse and verified-contribution process. After meaningful real-use evaluation, identify possible reusable lessons or improvements for user review; do not modify the canonical library without approval.
+
 ## Governing Sequence
 
 Use this sequence:
