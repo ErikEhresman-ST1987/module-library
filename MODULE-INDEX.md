@@ -19,7 +19,7 @@ Fast lookup for reusable parts admitted through the Module Library's Proven Valu
 | **“A name or note containing special characters displays incorrectly in generated page content.”** | [HTML Escape](modules/html-escape/) — applies to text inserted into generated HTML strings |
 | **“The app shows the wrong day around midnight,” or “daily items reset on the wrong date.”** | [Local Date Key](modules/local-date-key/) |
 | **“GitHub says I pushed an update, but I don't know whether the website actually deployed.”** | [GitHub Actions Deployment Verification](verification/github-actions-deployment-verification.md) |
-| **“I have an app idea but need to define what it should become and what it should not do.”** | [Goal Box Base](planning/goal-box-base.md) |
+| **“My generated sprite has a colored background,” “background removal erases white details,” or “colored outlines remain around leaves and stems.”** | [Selected-Color Sprite Background Removal](lessons/selected-color-sprite-background-removal.md) — sampled HEX color, enclosed-gap removal, tested edge cleanup, and limits |\n| **“I have an app idea but need to define what it should become and what it should not do.”** | [Goal Box Base](planning/goal-box-base.md) |
 | **“We've agreed on the goal; how do we choose the technical foundation and first useful piece?”** | [Project Foundation Base](planning/project-foundation-base.md) and [AI Project Planning Instructions](planning/ai-project-planning-instructions.md) |
 | **“We're building tiny technical steps that aren't meaningful to test,” or “the project keeps drifting away from the agreed plan.”** | [AI Project Planning Instructions](planning/ai-project-planning-instructions.md) |
 
@@ -64,7 +64,7 @@ Project-specific validation, state shape, UI, naming, and policy stay with the p
 | [PWA Shell Release Order](lessons/pwa-release-order.md) | Publish changed shell files before the new service worker so a new cache does not activate against unavailable files. | Personal Dashboard |
 | [Storage Key Is Not the Release Version](lessons/storage-key-is-not-release-version.md) | Keeps durable data namespace, schema version, application release, and service-worker cache version conceptually separate. | Personal Dashboard; reinforced across local-first projects |
 
-## Project Planning
+| [Selected-Color Sprite Background Removal](lessons/selected-color-sprite-background-removal.md) | Reusable solution and verification recipe for removing contrasting solid backgrounds from generated game artwork while preserving white details and fine edges. | Sprite Factory (Version 3 + color sampler; iPad user-tested) |\n\n## Project Planning
 
 | Item | Function | Proven across |
 |---|---|---|
