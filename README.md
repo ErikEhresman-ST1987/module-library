@@ -90,7 +90,7 @@ Clear responsibility, low coupling, adaptability, and repeated use are helpful q
 - A future project may copy, import, or adapt a module according to what produces the lowest-maintenance result.
 - When a module evolves, protect proven behavior and avoid adding options for imagined consumers.
 
-## Candidate Workflow
+## Contribution approval rule\n\nAfter a useful, reusable item is verified in real project use, **document it and index it as part of the normal workflow without requesting separate approval**. Keep the record concise, problem-first, and clear about what was and was not verified. Separate approval is still appropriate before replacing proven canonical implementations, destructive changes, or changing another project's working behavior. The library is intended to preserve learning, not create an extra approval bottleneck.\n\n## Candidate Workflow
 
 **Project need → demonstrated value and evidence → Proven Value and Reuse Test → preserve/extract → document verification and limits → make available for future projects**
 
