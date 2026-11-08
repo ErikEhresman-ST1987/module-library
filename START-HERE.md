@@ -27,7 +27,7 @@ At meaningful checkpoints after verification and real use, ask whether a reusabl
 3. Apply the README's Proven Value and Reuse Test. One demonstrated project is enough when future usefulness is plausible. Do not promote hypothetical or unverified code as proven; preserve evidenced failed attempts as lessons when useful.
 4. Extract the smallest coherent reusable part; keep project-specific assumptions in the project.
 5. Verify the extracted/adapted part and document the evidence and remaining limits. A real-project verification can establish value; independently verify adaptation when integrating into another project.
-6. Propose a precise library change for user approval before modifying canonical content. Do not silently overwrite proven parts or change working projects.
+6. **Document verified, useful reusable learning as part of the normal development workflow; no separate approval is required for a new evidence-backed lesson or a non-destructive index addition.** Do not silently replace proven code, rewrite existing project behavior, or change library-wide standards beyond the user's direction. Ask before a destructive or consequential change to a proven canonical implementation.
 7. Update the authoritative item, its Improvement Record, and the index's plain-language problem lookup (for new items **and** new problems solved by existing items). Record the symptom or goal and link to the actual solution rather than duplicating code. Existing projects are not automatically back-ported.
 
 ## Compact Improvement Record
@@ -48,6 +48,6 @@ Distinguish **implemented → activated/deployed → verified → used/played �
 This library is a **toolbox and development touchstone, not a framework**. The project remains authoritative. Avoid unnecessary documentation, speculative modules and forced reuse. Preserve the minimum history needed to make future decisions better.
 
 ## Quick invocation for another chat
-“Consult `ErikEhresman-ST1987/module-library/START-HERE.md`, follow its retrieval and contribution instructions, and search the index by the problem or goal in ordinary language before implementing. After verified real use, identify any reusable improvements for review; do not change the library without my approval.”
+“Consult `ErikEhresman-ST1987/module-library/START-HERE.md`, search by the problem or goal in ordinary language, and use fitting proven parts. After verified real use, document useful reusable improvements and index them without waiting for separate approval. Ask before replacing proven canonical code or changing working projects.”
 
 If repository access is unavailable, say so and request access or the relevant files rather than claiming the library was consulted.
